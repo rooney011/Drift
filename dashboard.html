@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drift - Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" fill="#5B5FED" />
+                    <path d="M12 7v10M7 12h10" stroke="white" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            <span class="logo-text">Drift</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="home.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                <span>Insights</span>
+            </a>
+            <a href="popup.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M12 1v6m0 6v6" />
+                </svg>
+                <span>Live Monitoring</span>
+            </a>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-avatar" id="user-avatar">DR</div>
+            <div class="user-info">
+                <div class="user-name" id="user-name">Loading...</div>
+                <div class="user-plan">Free Plan</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1 class="page-title">Daily Insights</h1>
+                <p class="page-subtitle" id="greeting-text">Loading...</p>
+            </div>
+            <div class="time-filter">
+                <button class="filter-btn active" data-filter="today">Today</button>
+                <button class="filter-btn" data-filter="yesterday">Yesterday</button>
+                <button class="filter-btn" data-filter="7days">Last 7 Days</button>
+            </div>
+        </header>
+
+        <!-- AI Companion Tip -->
+        <div class="tip-card">
+            <div class="tip-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B5FED" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+            </div>
+            <div class="tip-content">
+                <div class="tip-label">AI COMPANION TIP</div>
+                <p class="tip-text" id="ai-tip">
+                    You maintained focus <span class="highlight" id="focus-change">15% longer</span> today than
+                    yesterday.
+                    You work best in short bursts in the morning. Try the Pomodoro technique tomorrow!
+                </p>
+            </div>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon hourglass">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B5FED" stroke-width="2">
+                        <path d="M6 2h12M6 22h12M12 8v8M8 12h8" />
+                    </svg>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">Sweet Spot Duration</div>
+                    <div class="metric-value" id="sweet-spot">25 mins</div>
+                    <div class="metric-subtitle">Optimal focused work block length</div>
+                </div>
+                <div class="metric-badge positive" id="duration-change">↗ +5m</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon sun">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFA500" stroke-width="2">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-label">Peak Productivity</div>
+                    <div class="metric-value" id="peak-time">10 AM - 12 PM</div>
+                    <div class="metric-subtitle">Best time for complex tasks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Focus Timeline Chart -->
+        <div class="timeline-card">
+            <div class="timeline-header">
+                <div>
+                    <h3 class="timeline-title">Focus Timeline</h3>
+                    <p class="timeline-subtitle" id="session-time">9:00 AM - 5:00 PM Session</p>
+                </div>
+                <div class="timeline-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot high"></span>
+                        <span>High Focus</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot low"></span>
+                        <span>Rest / Distracted</span>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-chart" id="timeline-chart">
+                <!-- Hourly timeline bars will be generated by JavaScript -->
+            </div>
+
+            <!-- Weekly Chart Canvas -->
+            <div style="margin-top: 32px;">
+                <h3 class="timeline-title" style="margin-bottom: 16px;">Weekly Focus Trends</h3>
+                <div style="height: 250px;">
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Notice -->
+        <p class="privacy-notice">Data is stored locally on your device for privacy.</p>
+    </main>
+
+    <script src="chart.umd.min.js"></script>
+    <script src="analytics.js"></script>
+    <script type="module" src="dashboard.js"></script>
+</body>
+
+</html>

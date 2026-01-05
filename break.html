@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drift - Focus Tracker</title>
+    <link rel="stylesheet" href="break.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="focus-card">
+        <div class="card-header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="#5B5FED" />
+                        <path d="M12 7v10M7 12h10" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <span class="brand-name">Drift</span>
+            </div>
+        </div>
+
+        <div class="focus-content">
+            <div class="progress-circle">
+                <svg width="180" height="180" viewBox="0 0 180 180">
+                    <circle cx="90" cy="90" r="70" fill="none" stroke="#E8E9FF" stroke-width="12" />
+                    <circle id="progress-ring" cx="90" cy="90" r="70" fill="none" stroke="#5B5FED" stroke-width="12"
+                        stroke-linecap="round" stroke-dasharray="439.82" stroke-dashoffset="109.95"
+                        transform="rotate(-90 90 90)" />
+                </svg>
+                <div class="progress-text">
+                    <div id="focus-percentage">75%</div>
+                    <div id="focus-label">FOCUS</div>
+                </div>
+            </div>
+
+            <div class="prediction-badge">
+                <span class="live-dot"></span>
+                <span class="prediction-text">LIVE PREDICTION</span>
+            </div>
+
+            <h2 id="status-title">Attention holding steady</h2>
+            <p id="status-description">Predicted dip in -10 mins based on your patterns.</p>
+        </div>
+    </div>
+
+    <script type="module" src="activities.js"></script>
+    <script type="module" src="break.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Drift</title>
+    <link rel="stylesheet" href="welcome.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#5B5FED" />
+                <path d="M12 7v10M7 12h10" stroke="white" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span class="logo-text">Drift</span>
+        </div>
+
+        <div class="welcome-card">
+            <div class="card-header">
+                <div class="banner"></div>
+                <h1>Welcome to your new companion.</h1>
+                <p class="subtitle">I'm here to help you stay focused without the stress.<br>First things first—what
+                    should I call you?</p>
+            </div>
+
+            <form id="welcome-form">
+                <div class="form-group">
+                    <label for="full-name">Full Name</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        <input type="text" id="full-name" placeholder="Enter your full name" autocomplete="name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferred-name">
+                        What should I call you?
+                        <span class="recommended">Recommended</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                        <input type="text" id="preferred-name" placeholder="Preferred name" autocomplete="given-name">
+                    </div>
+                </div>
+
+                <button type="submit" class="continue-btn">
+                    Save & Continue
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </button>
+
+                <p class="privacy-note">We value your privacy. Your data stays on your device.</p>
+            </form>
+        </div>
+    </div>
+
+    <script src="welcome.js"></script>
+</body>
+
+</html>

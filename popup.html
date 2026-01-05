@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -114,7 +115,8 @@
       cursor: pointer;
       transition: all 0.3s ease;
       box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
-      display: none; /* Hidden by default */
+      display: none;
+      /* Hidden by default */
     }
 
     .demo-btn:hover {
@@ -154,6 +156,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -190,6 +193,8 @@
 
   <!-- Chart.js UMD build (local file for extension compatibility) -->
   <script src="chart.umd.min.js"></script>
-  <script src="popup.js"></script>
+  <script src="analytics.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
+
 </html>
