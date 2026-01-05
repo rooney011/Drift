@@ -1,140 +1,109 @@
 // Drift Content Script - Privacy-First Behavior Tracking
-// Only tracks scroll patterns and mouse position, NO text logging
+// Tracks scroll velocity, mouse position, and typing patterns
 
 (function() {
   'use strict';
 
   // ========== State Variables ==========
-  let scrollHistory = [];
-  let lastScrollY = window.scrollY;
-  let lastScrollTime = Date.now();
-  let isHoveringTop = false;
+  let scrollVelocities = []; // Store scroll velocities
+  let previousScrollY = window.scrollY;
+  let isHoveringTop = false; // Track if mouse is near top
   
-  const SCROLL_HISTORY_LIMIT = 10; // Keep last 10 scroll measurements
-  const UPDATE_INTERVAL = 30000; // 30 seconds in milliseconds
-  const TOP_HOVER_THRESHOLD = 50; // pixels from top
+  // Typing tracking
+  let lastKeystrokeTime = null;
+  let typingIntervals = []; // Time between keystrokes
+  let backspaceCount = 0;
 
-  // ========== Scroll Monitor ==========
-  function trackScroll() {
+  const TOP_HOVER_THRESHOLD = 50; // pixels from top
+  const UPDATE_INTERVAL = 2000; // 2 seconds (for testing)
+
+  // ========== Scroll Tracking ==========
+  window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
+    
+    // Calculate scroll velocity (absolute difference)
+    const scrollVelocity = Math.abs(currentScrollY - previousScrollY);
+    
+    // Store in array
+    scrollVelocities.push(scrollVelocity);
+    
+    // Update previous position
+    previousScrollY = currentScrollY;
+  }, { passive: true });
+
+  // ========== Mouse Tracking ==========
+  window.addEventListener('mousemove', (event) => {
+    // Detect if mouse is hovering near the top
+    isHoveringTop = event.clientY < TOP_HOVER_THRESHOLD;
+  }, { passive: true });
+
+  // ========== Typing Sensor (Privacy-First) ==========
+  window.addEventListener('keydown', (event) => {
     const currentTime = Date.now();
     
-    // Calculate time delta
-    const timeDelta = currentTime - lastScrollTime;
+    // Track Backspace for error rate (ONLY key we identify)
+    if (event.key === 'Backspace') {
+      backspaceCount++;
+    }
     
-    // Only calculate if enough time has passed (avoid division by zero)
-    if (timeDelta > 0) {
-      // Calculate scroll distance and velocity
-      const scrollDistance = currentScrollY - lastScrollY;
-      const velocity = Math.abs(scrollDistance / timeDelta); // pixels per millisecond
-      
-      // Store in history with direction
-      scrollHistory.push({
-        velocity: velocity,
-        direction: scrollDistance > 0 ? 'down' : scrollDistance < 0 ? 'up' : 'none',
-        timestamp: currentTime
-      });
-      
-      // Keep history limited
-      if (scrollHistory.length > SCROLL_HISTORY_LIMIT) {
-        scrollHistory.shift();
+    // Measure typing speed (interval between ANY keystrokes)
+    if (lastKeystrokeTime !== null) {
+      const interval = currentTime - lastKeystrokeTime;
+      // Only track reasonable intervals (10ms to 5000ms to filter out noise)
+      if (interval >= 10 && interval <= 5000) {
+        typingIntervals.push(interval);
       }
     }
     
-    // Update last scroll position and time
-    lastScrollY = currentScrollY;
-    lastScrollTime = currentTime;
-  }
+    // Update last keystroke time
+    lastKeystrokeTime = currentTime;
+  }, { passive: true });
 
-  // Calculate average scroll velocity and detect erratic behavior
-  function calculateScrollMetrics() {
-    if (scrollHistory.length === 0) {
-      return {
-        averageVelocity: 0,
-        isErratic: false
-      };
+  // ========== Data Transmission (Every 2 Seconds) ==========
+  setInterval(() => {
+    // Calculate average scroll velocity
+    let averageScrollVelocity = 0;
+    if (scrollVelocities.length > 0) {
+      const sum = scrollVelocities.reduce((acc, val) => acc + val, 0);
+      averageScrollVelocity = sum / scrollVelocities.length;
     }
     
-    // Calculate average velocity
-    const totalVelocity = scrollHistory.reduce((sum, entry) => sum + entry.velocity, 0);
-    const averageVelocity = totalVelocity / scrollHistory.length;
-    
-    // Detect erratic scrolling (rapid direction changes)
-    let directionChanges = 0;
-    for (let i = 1; i < scrollHistory.length; i++) {
-      if (scrollHistory[i].direction !== scrollHistory[i - 1].direction && 
-          scrollHistory[i].direction !== 'none' && 
-          scrollHistory[i - 1].direction !== 'none') {
-        directionChanges++;
-      }
+    // Calculate average typing interval
+    let avgTypingInterval = 0;
+    if (typingIntervals.length > 0) {
+      const sumIntervals = typingIntervals.reduce((acc, val) => acc + val, 0);
+      avgTypingInterval = sumIntervals / typingIntervals.length;
     }
-    
-    // Consider erratic if more than 50% of scrolls are direction changes
-    const isErratic = scrollHistory.length > 3 && 
-                     (directionChanges / (scrollHistory.length - 1)) > 0.5;
-    
-    return {
-      averageVelocity: averageVelocity,
-      isErratic: isErratic
-    };
-  }
-
-  // ========== Mouse Monitor ==========
-  function trackMousePosition(event) {
-    // Check if mouse is hovering near the top of the browser
-    isHoveringTop = event.clientY < TOP_HOVER_THRESHOLD;
-  }
-
-  // ========== Send Behavior Update ==========
-  function sendBehaviorUpdate() {
-    const scrollMetrics = calculateScrollMetrics();
-    
-    const behaviorData = {
-      type: 'BEHAVIOR_UPDATE',
-      scrollVelocity: scrollMetrics.averageVelocity,
-      isScrollErratic: scrollMetrics.isErratic,
-      isHoveringTop: isHoveringTop,
-      timestamp: Date.now()
-    };
     
     // Send message to background script
-    chrome.runtime.sendMessage(behaviorData, (response) => {
+    chrome.runtime.sendMessage({
+      type: 'BEHAVIOR_UPDATE',
+      payload: {
+        scrollVelocity: averageScrollVelocity,
+        isHoveringTop: isHoveringTop,
+        avgTypingInterval: avgTypingInterval,
+        backspaceCount: backspaceCount
+      }
+    }, (response) => {
       if (chrome.runtime.lastError) {
-        // Silently handle errors (extension might be reloading)
+        // Extension might be reloading, silently handle
         console.debug('Drift: Message send failed', chrome.runtime.lastError.message);
+      } else {
+        console.log('Drift: Behavior data sent', {
+          scrollVelocity: averageScrollVelocity.toFixed(2),
+          isHoveringTop: isHoveringTop,
+          avgTypingInterval: avgTypingInterval.toFixed(0),
+          backspaceCount: backspaceCount
+        });
       }
     });
     
-    // Reset scroll history after sending (start fresh for next interval)
-    scrollHistory = [];
-  }
+    // Reset counters for next interval
+    scrollVelocities = [];
+    typingIntervals = [];
+    backspaceCount = 0;
+    
+  }, UPDATE_INTERVAL);
 
-  // ========== Event Listeners ==========
-  
-  // Scroll event with debouncing
-  let scrollTimeout;
-  window.addEventListener('scroll', () => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(trackScroll, 100); // Debounce to avoid excessive calculations
-  }, { passive: true });
-
-  // Mouse movement event with throttling
-  let lastMouseTrack = 0;
-  window.addEventListener('mousemove', (event) => {
-    const now = Date.now();
-    if (now - lastMouseTrack > 200) { // Throttle to every 200ms
-      trackMousePosition(event);
-      lastMouseTrack = now;
-    }
-  }, { passive: true });
-
-  // ========== Periodic Updates ==========
-  
-  // Send initial update after page load
-  setTimeout(sendBehaviorUpdate, 5000); // Wait 5 seconds after page load
-  
-  // Send updates every 30 seconds
-  setInterval(sendBehaviorUpdate, UPDATE_INTERVAL);
-
-  console.log('Drift: Content script initialized - Privacy-first behavior tracking active');
+  console.log('Drift: Content script initialized - Tracking scroll, mouse, and typing every 2 seconds');
 })();

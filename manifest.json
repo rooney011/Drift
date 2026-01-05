@@ -1,15 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Drift",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Predictive attention monitoring tool",
   "permissions": [
     "storage",
     "alarms",
     "notifications",
     "activeTab",
-    "scripting"
+    "scripting",
+    "offscreen"
   ],
+
   "host_permissions": [
     "<all_urls>"
   ],
@@ -36,5 +38,22 @@
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "sandbox": {
+    "pages": ["sandbox.html"]
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sandbox.html",
+        "sandbox.js",
+        "offscreen.html",
+        "offscreen_bridge.js",
+        "tf.min.js",
+        "models/model.json",
+        "models/group1-shard1of1.bin"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
