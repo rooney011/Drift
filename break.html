@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drift - Take a Break</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 600px;
+      padding: 40px;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .subtitle {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-bottom: 60px;
+    }
+
+    .activity-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .activity-label {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.8;
+      margin-bottom: 15px;
+    }
+
+    .activity-text {
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .timer-container {
+      margin: 40px 0;
+    }
+
+    .timer {
+      font-size: 80px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .timer-label {
+      font-size: 16px;
+      opacity: 0.8;
+      margin-top: 10px;
+    }
+
+    .focus-btn {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 18px 50px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      margin-top: 20px;
+    }
+
+    .focus-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .focus-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .focus-btn:not(:disabled) {
+      animation: buttonReady 0.5s ease-in;
+    }
+
+    @keyframes buttonReady {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: float 15s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating particles for visual interest -->
+  <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="particle" style="left: 30%; animation-delay: 3s;"></div>
+  <div class="particle" style="left: 50%; animation-delay: 6s;"></div>
+  <div class="particle" style="left: 70%; animation-delay: 9s;"></div>
+  <div class="particle" style="left: 90%; animation-delay: 12s;"></div>
+
+  <div class="container">
+    <h1>🧠 Brain Reset</h1>
+    <p class="subtitle">Your attention has drifted. Let's refocus together.</p>
+
+    <div class="activity-card">
+      <div class="activity-label">Your Break Activity</div>
+      <div class="activity-text" id="activity">Loading...</div>
+    </div>
+
+    <div class="timer-container">
+      <div class="timer" id="timer">30</div>
+      <div class="timer-label">seconds remaining</div>
+    </div>
+
+    <button class="focus-btn" id="focusBtn" disabled>
+      I'm Ready to Focus 🎯
+    </button>
+  </div>
+
+  <script src="break.js"></script>
+</body>
+</html>

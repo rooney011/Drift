@@ -315,24 +315,44 @@ function saveFocusHistory(analysisData) {
   });
 }
 
-// ========== Trigger Intervention Notification ==========
+// Trigger distraction intervention
 function triggerIntervention(score) {
-  const scorePercent = Math.round(score * 100);
+  const scorePercent = (score * 100).toFixed(1);
   
-  chrome.notifications.create({
+  console.log(`🚨 Drift: Triggering intervention for score ${scorePercent}%`);
+  
+  // Show notification
+  chrome.notifications.create('drift-intervention', {
     type: 'basic',
     iconUrl: 'icons/icon128.png',
-    title: 'Drift 🧠',
-    message: `Focus drifting? Take a break! (AI Score: ${scorePercent}%)`,
-    priority: 2
+    title: 'Drift 🧠 - Time for a Break',
+    message: `Focus drifting detected (${scorePercent}%). Click to take a 30-second break.`,
+    priority: 2,
+    requireInteraction: true  // Keep notification visible until clicked
   }, (notificationId) => {
     if (chrome.runtime.lastError) {
       console.error('Drift: Notification error', chrome.runtime.lastError);
     } else {
-      console.log('Drift: Intervention notification sent', notificationId);
+      console.log('Drift: Intervention notification sent:', notificationId);
     }
   });
 }
+
+// Listen for notification clicks
+chrome.notifications.onClicked.addListener((notificationId) => {
+  if (notificationId === 'drift-intervention') {
+    console.log('Drift: Notification clicked, opening break page');
+    
+    // Open break.html as a new tab
+    chrome.tabs.create({
+      url: chrome.runtime.getURL('break.html'),
+      active: true
+    });
+    
+    // Clear the notification
+    chrome.notifications.clear(notificationId);
+  }
+});
 
 console.log('Drift AI: Background service worker initialized');
 console.log('Setting up offscreen document for TensorFlow.js...');
