@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drift - Daily Insights</title>
+  <style>
+    :root {
+      --primary-blue: #3b82f6;
+      --bg-color: #f3f4f6;
+      --sidebar-width: 260px;
+      --card-radius: 20px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-color);
+      color: #1a1a1a;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: white;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      border-right: 1px solid #e5e7eb;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 48px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--primary-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: #6b7280;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: #f9fafb;
+      color: #1a1a1a;
+    }
+
+    .nav-item.active {
+      background: #eff6ff;
+      color: var(--primary-blue);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: #dbeafe;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-blue);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .user-info p {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 40px;
+      max-width: 1200px;
+    }
+
+    /* Header Section */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+    }
+
+    .header-text h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .header-text p {
+      color: #6b7280;
+      font-size: 16px;
+    }
+
+    .date-filters {
+      background: white;
+      padding: 4px;
+      border-radius: 99px;
+      display: flex;
+      gap: 4px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border: none;
+      background: none;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--primary-blue);
+      color: white;
+    }
+
+    /* AI Insight Banner */
+    .ai-banner {
+      background: linear-gradient(135deg, #f0fdfa 0%, #eff6ff 100%);
+      border: 1px solid #e0e7ff;
+      border-radius: var(--card-radius);
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: flex-start;
+    }
+
+    .ai-icon {
+      background: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      font-size: 20px;
+    }
+
+    .ai-content h3 {
+      font-size: 12px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .ai-content p {
+      color: #1f2937;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    /* Metrics Grid */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: white;
+      padding: 24px;
+      border-radius: var(--card-radius);
+      border: 1px solid #e5e7eb;
+      position: relative;
+    }
+
+    .metric-icon-small {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .metric-icon-small.blue { background: #eff6ff; color: var(--primary-blue); }
+    .metric-icon-small.orange { background: #fff7ed; color: #f97316; }
+
+    .change-badge {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: #ecfdf5;
+      color: #059669;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .label-small {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .value-large {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .subtext {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    /* Timeline Chart */
+    .chart-card {
+      background: white;
+      padding: 32px;
+      border-radius: var(--card-radius);
+      border: 1px solid #e5e7eb;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .chart-title h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .dot.blue { background: var(--primary-blue); }
+    .dot.gray { background: #e5e7eb; }
+
+    .chart-container {
+      height: 300px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        🧠
+      </div>
+      Drift
+    </div>
+
+    <div class="nav-menu">
+
+      <a href="#" class="nav-item active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Insights
+      </a>
+      <a href="#" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar" id="user-avatar">?</div>
+      <div class="user-info">
+        <h4 id="sidebar-username">User</h4>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="main-content">
+    
+    <!-- View: Daily Insights -->
+    <div id="insights-view">
+      <!-- Header -->
+      <header class="page-header">
+        <div class="header-text">
+          <h1 id="page-greeting">Daily Insights</h1>
+          <p>Good afternoon, <span id="header-username">Alex</span>. Focus is steady today.</p>
+        </div>
+        <div class="date-filters">
+          <button class="filter-btn active">Today</button>
+          <button class="filter-btn">Yesterday</button>
+          <button class="filter-btn">Last 7 Days</button>
+        </div>
+      </header>
+
+      <!-- Metrics Row -->
+      <section class="metrics-row">
+        <!-- Sweet Spot -->
+        <article class="metric-card">
+          <!-- <div class="change-badge">↗</div> -->
+          <div class="metric-icon-small blue">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
+          </div>
+          <p class="label-small">Sweet Spot Duration</p>
+          <h2 class="value-large">25 mins</h2>
+          <p class="subtext">Optimal focused work block length</p>
+        </article>
+  
+        <!-- Peak Productivity -->
+        <article class="metric-card">
+          <div class="metric-icon-small orange">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <p class="label-small">Peak Productivity</p>
+          <h2 class="value-large">10 AM - 12 PM</h2>
+          <p class="subtext">Best time for complex tasks</p>
+        </article>
+      </section>
+  
+      <!-- Chart -->
+      <section class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <h3>Focus Timeline</h3>
+            <p class="subtext">9:00 AM - 5:00 PM Session</p>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="dot blue"></div> High Focus</div>
+            <div class="legend-item"><div class="dot gray"></div> Rest / Distracted</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="insights-chart"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <!-- View: Settings -->
+    <div id="settings-view" style="display: none;">
+      <header class="page-header">
+        <div class="header-text">
+          <h1>Settings</h1>
+          <p>Customize your Drift experience.</p>
+        </div>
+      </header>
+
+      <div style="max-width: 800px;">
+        
+        <!-- AI Sensitivity -->
+        <section style="background: white; border-radius: 20px; padding: 32px; border: 1px solid #e5e7eb; margin-bottom: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">AI Sensitivity</h3>
+          <p style="color: #6b7280; font-size: 14px; margin-bottom: 24px;">Adjust how strictly Drift monitors your focus.</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <!-- Low -->
+            <label class="sensitivity-card" style="cursor: pointer;">
+              <input type="radio" name="sensitivity" value="low" style="display: none;">
+              <div class="card-content" style="border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; transition: all 0.2s;">
+                <!-- <div style="font-size: 24px; margin-bottom: 12px;">🧘</div> -->
+                <div style="font-weight: 600; margin-bottom: 4px;">Zen Mode</div>
+                <div style="font-size: 12px; color: #6b7280; line-height: 1.4;">Rare interventions. Only for major distractions.</div>
+              </div>
+            </label>
+
+            <!-- Balanced -->
+            <label class="sensitivity-card" style="cursor: pointer;">
+              <input type="radio" name="sensitivity" value="balanced" style="display: none;" checked>
+              <div class="card-content" style="border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; transition: all 0.2s;">
+                <!-- <div style="font-size: 24px; margin-bottom: 12px;">⚖️</div> -->
+                <div style="font-weight: 600; margin-bottom: 4px;">Balanced</div>
+                <div style="font-size: 12px; color: #6b7280; line-height: 1.4;">Standard coaching. Keeps you on track gently.</div>
+              </div>
+            </label>
+
+            <!-- High -->
+            <label class="sensitivity-card" style="cursor: pointer;">
+              <input type="radio" name="sensitivity" value="high" style="display: none;">
+              <div class="card-content" style="border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; transition: all 0.2s;">
+                <!-- <div style="font-size: 24px; margin-bottom: 12px;">🎯</div> -->
+                <div style="font-weight: 600; margin-bottom: 4px;">Drill Sergeant</div>
+                <div style="font-size: 12px; color: #6b7280; line-height: 1.4;">Strict monitoring. High focus required.</div>
+              </div>
+            </label>
+          </div>
+          
+          <style>
+            .sensitivity-card input:checked + .card-content {
+              border-color: #3b82f6 !important;
+              background-color: #eff6ff;
+            }
+          </style>
+        </section>
+
+        <!-- Profile -->
+        <section style="background: white; border-radius: 20px; padding: 32px; border: 1px solid #e5e7eb; margin-bottom: 24px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Profile</h3>
+          <p style="color: #6b7280; font-size: 14px; margin-bottom: 24px;">How should Drift address you?</p>
+          
+          <div style="display: flex; gap: 16px;">
+            <input type="text" id="settings-name" placeholder="Your Name" style="flex: 1; padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none;">
+            <button id="save-profile-btn" style="background: #3b82f6; color: white; border: none; padding: 0 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Save</button>
+          </div>
+        </section>
+
+        <!-- Danger Zone -->
+        <section style="background: #fff1f2; border-radius: 20px; padding: 32px; border: 1px solid #fecdd3;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #be123c;">Privacy & Data</h3>
+          <p style="color: #9f1239; font-size: 14px; margin-bottom: 24px;">Clear all your focus history and usage data. This cannot be undone.</p>
+          
+          <button id="clear-data-btn" style="background: white; color: #be123c; border: 1px solid #fda4af; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;">Clear All Data</button>
+        </section>
+
+      </div>
+    </div>
+
+
+
+  </main>
+
+  <script src="chart.umd.js"></script>
+  <script src="analytics.js"></script>
+</body>
+</html>

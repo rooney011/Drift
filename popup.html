@@ -13,182 +13,438 @@
 
     body {
       width: 420px;
-      min-height: 500px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
-      padding: 20px;
+      min-height: 600px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
     }
 
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Wavy Header */
+    .header {
+      background: linear-gradient(135deg, #e0f2fe 0%, #ddd6fe 100%);
+      padding: 40px 24px 80px;
+      position: relative;
+      overflow: hidden;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 24px;
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: #ffffff;
+      border-radius: 50% 50% 0 0 / 30px 30px 0 0;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
-      letter-spacing: -1px;
+      color: #1a1a1a;
       margin-bottom: 8px;
-      background: linear-gradient(to right, #fff, #f0f0f0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      letter-spacing: -0.5px;
     }
 
     .subtitle {
-      font-size: 13px;
-      opacity: 0.8;
+      font-size: 14px;
+      color: #6b7280;
       font-weight: 400;
     }
 
-    .status-box {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      text-align: center;
+    /* Main Content */
+    .container {
+      padding: 0 24px 24px;
     }
 
-    .status-label {
-      font-size: 12px;
+    /* Stats Card */
+    .stats-card {
+      background: #ffffff;
+      border: 1px solid #3b82f6;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .stat-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .focus-score-large {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1a1a1a;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .score-label {
+      text-align: center;
+      font-size: 13px;
+      color: #6b7280;
       text-transform: uppercase;
       letter-spacing: 1px;
-      opacity: 0.7;
       margin-bottom: 8px;
     }
 
-    .status-value {
-      font-size: 36px;
-      font-weight: 700;
-      line-height: 1;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    #focus-status {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: #f3f4f6;
     }
 
-    .status-description {
-      font-size: 11px;
-      opacity: 0.6;
-      margin-top: 8px;
-    }
-
-    .chart-container {
-      background: rgba(255, 255, 255, 0.95);
+    #focus-streak {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 16px;
+      padding: 12px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
       border-radius: 12px;
+      color: #92400e;
+    }
+
+    /* Mini Stats Grid */
+    .mini-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .mini-stat {
+      background: #f9fafb;
       padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid #3b82f6;
+    }
+
+    .mini-stat-label {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .mini-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    /* Chart Container */
+    .chart-section {
+      background: #ffffff;
+      border: 1px solid #3b82f6;
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 20px;
       margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .chart-title {
-      color: #667eea;
       font-size: 14px;
       font-weight: 600;
-      margin-bottom: 12px;
-      text-align: center;
+      color: #374151;
+      margin-bottom: 16px;
     }
 
     canvas {
-      max-width: 100%;
-      height: 200px !important;
+      width: 100% !important;
+      height: auto !important;
     }
 
+    /* Circular Progress Indicator */
+    .circular-progress {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 24px auto;
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.3s;
+    }
+
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .progress-percentage {
+      font-size: 40px;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Settings Dropdown */
+    .settings-card {
+      background: #ffffff;
+      border: 1px solid #3b82f6;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .settings-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      color: #1a1a1a;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    select:hover {
+      border-color: #3b82f6;
+      background: #ffffff;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Demo Button */
     .demo-btn {
       width: 100%;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 14px 24px;
+      font-size: 15px;
       font-weight: 600;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
-      display: none; /* Hidden by default */
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      margin-top: 8px;
     }
 
     .demo-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
     }
 
     .demo-btn:active {
       transform: translateY(0);
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 16px;
+    /* Settings Icon */
+    .settings-icon-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #e5e7eb;
+      border-radius: 12px; /* Round rectangle matching theme */
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 10;
+      color: #6b7280;
     }
 
-    .stat-card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+    .settings-icon-btn:hover {
+      background: white;
+      color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: rotate(15deg);
     }
 
-    .stat-label {
-      font-size: 11px;
-      opacity: 0.7;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+    /* Input Fields */
+
+    /* Input Fields */
+    .input-group {
+      margin-bottom: 20px;
     }
 
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
+    .input-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      color: #1a1a1a;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+
+    .text-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .text-input::placeholder {
+      color: #9ca3af;
+    }
+
+    /* Views */
+    #dashboard-view {
+      display: none; /* Hidden by default until onboarded */
+    }
+
+    #onboarding-view {
+      display: none; /* Shown by JS if needed */
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Drift</h1>
-      <p class="subtitle">Predictive Attention Monitoring</p>
-    </header>
-
-    <div class="status-box">
-      <div class="status-label">Current Focus Score</div>
-      <div class="status-value" id="focus-score">--</div>
-      <div class="status-description" id="focus-status">Loading...</div>
+  <!-- Wavy Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1 id="header-title">Drift</h1>
+      <p class="subtitle" id="header-subtitle">Your AI-powered focus companion</p>
     </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Data Points</div>
-        <div class="stat-value" id="data-count">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Avg Score</div>
-        <div class="stat-value" id="avg-score">--</div>
-      </div>
-    </div>
-
-    <div class="chart-container">
-      <div class="chart-title">Focus History</div>
-      <canvas id="focus-chart"></canvas>
-    </div>
-
-    <button id="demo-btn" class="demo-btn">
-      🎯 Simulate Distraction (Demo)
+    <button class="settings-icon-btn" id="open-analytics-btn" title="Open Analytics & Settings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
     </button>
   </div>
 
-  <!-- Chart.js UMD build (local file for extension compatibility) -->
+  <div class="container">
+    <!-- Onboarding View -->
+    <div id="onboarding-view">
+      <p style="font-size: 15px; color: #4b5563; line-height: 1.5; margin-bottom: 24px;">
+        I'm here to help you stay focused without the stress. First things first—what should I call you?
+      </p>
+
+      <div class="input-group">
+        <label class="input-label">Full Name</label>
+        <input type="text" class="text-input" id="full-name" placeholder="Enter your full name">
+      </div>
+
+      <div class="input-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="input-label" style="margin-bottom: 0;">What should I call you?</label>
+          <span style="font-size: 11px; color: #3b82f6; background: #eff6ff; padding: 2px 6px; border-radius: 4px;">Recommended</span>
+        </div>
+        <input type="text" class="text-input" id="preferred-name" placeholder="Preferred name">
+      </div>
+
+      <button id="save-btn" class="demo-btn" style="margin-top: 16px;">
+        Save & Continue &rarr;
+      </button>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view">
+    <!-- Focus Score Card -->
+    <div class="stats-card">
+      <div class="score-label">Current Focus Score</div>
+      <div class="focus-score-large" id="focus-score">--</div>
+      <div id="focus-status">Loading...</div>
+      <div id="focus-streak">🔥 Warming up...</div>
+    </div>
+
+    <!-- Mini Stats -->
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-label">Data Points</div>
+        <div class="mini-stat-value" id="data-count">0</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-label">Avg Score</div>
+        <div class="mini-stat-value" id="avg-score">--</div>
+      </div>
+    </div>
+
+    <!-- Focus Trend Chart (Replaces Confidence Ring) -->
+    <div class="chart-section">
+      <div class="chart-title">Focus Trend</div>
+      <div style="height: 160px; width: 100%;">
+        <canvas id="focus-chart"></canvas>
+      </div>
+    </div>
+
+
+
+    <!-- Settings -->
+    <div class="settings-card">
+      <div class="settings-label">Sensitivity</div>
+      <select id="sensitivity">
+        <option value="low">Zen Mode (Low - 0.8 threshold)</option>
+        <option value="balanced" selected>Balanced (Default - 0.6 threshold)</option>
+        <option value="high">Drill Sergeant (High - 0.4 threshold)</option>
+      </select>
+    </div>
+
+    <!-- Demo Button -->
+    <button id="demo-btn" class="demo-btn">
+      🎯 Test Alert System
+    </button>
+    </div>
+  </div>
+
+  <!-- Chart.js UMD build -->
   <script src="chart.umd.js"></script>
   <script src="popup.js"></script>
 </body>

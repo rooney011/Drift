@@ -66,9 +66,17 @@ async function predict(inputData) {
   }
   
   try {
-    // inputData is array of 10 timesteps, each with 5 features
+    // PAD DATA: Model expects 10 timesteps. If we have fewer (Debug Mode), pad it.
+    let processedData = inputData;
+    if (inputData.length < 10) {
+      console.log(`[Sandbox] Padding data from ${inputData.length} to 10 timesteps`);
+      while (processedData.length < 10) {
+        processedData.unshift(processedData[0]); // Duplicate first frame
+      }
+    }
+    
     // Model expects shape [batch, timesteps, features] = [1, 10, 5]
-    const tensor = tf.tensor3d([inputData], [1, 10, 5]);
+    const tensor = tf.tensor3d([processedData], [1, 10, 5]);
     const prediction = model.predict(tensor);
     const score = prediction.dataSync()[0];
     

@@ -13,16 +13,28 @@ let lastBehavior = {
 let lastActiveTabId = null;
 
 // AI Model variables
-let featureHistory = []; // Rolling window of 10 feature vectors
-const FEATURE_WINDOW_SIZE = 10;
-const AI_THRESHOLD = 0.6; // Prediction threshold
+let featureHistory = []; // Rolling window of features
+const FEATURE_WINDOW_SIZE = 10; // 10 = Production (uses last 10 samples)
+
+// Dynamic AI threshold based on sensitivity setting
+let AI_THRESHOLD = 0.6; // Default: Balanced
+
+// Threshold mappings
+const SENSITIVITY_THRESHOLDS = {
+  low: 0.8,      // Zen Mode - only trigger on very high distraction
+  balanced: 0.6, // Default - moderate trigger
+  high: 0.4      // Drill Sergeant - trigger easily
+};
+
+// Gamification: Focus Streak
+let focusMinutes = 0; // Track consecutive minutes of focus
 
 // Offscreen document state
 let offscreenDocumentCreated = false;
 let modelReady = false;
 
 const ALARM_NAME = 'drift-analysis-alarm';
-const ALARM_INTERVAL_MINUTES = 1;
+const ALARM_INTERVAL_MINUTES = 1.0; // Production: 1 minute
 const MAX_HISTORY_ENTRIES = 1000;
 
 // ========== Offscreen Document Management ==========
@@ -96,100 +108,34 @@ async function loadModel() {
 
 // ========== Initialize Service Worker ==========
 chrome.runtime.onInstalled.addListener((details) => {
-  console.log('Drift: Service worker installed', details.reason);
-  
-  // Create the recurring alarm
-  chrome.alarms.create(ALARM_NAME, {
-    periodInMinutes: ALARM_INTERVAL_MINUTES
-  });
+  // ...
   
   // Initialize storage
-  chrome.storage.local.get(['focusHistory'], (result) => {
+  chrome.storage.local.get(['focusHistory', 'featureHistory'], (result) => {
     if (!result.focusHistory) {
       chrome.storage.local.set({ focusHistory: [] });
     }
-  });
-  
-  console.log(`Drift: Alarm set to trigger every ${ALARM_INTERVAL_MINUTES} minute(s)`);
-  
-  // Setup offscreen document
-  setupOffscreenDocument();
-});
-
-// Re-create alarm on startup
-chrome.runtime.onStartup.addListener(() => {
-  chrome.alarms.create(ALARM_NAME, {
-    periodInMinutes: ALARM_INTERVAL_MINUTES
-  });
-  console.log('Drift: Alarm re-created on startup');
-  setupOffscreenDocument();
-});
-
-// ========== Message Listener ==========
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'BEHAVIOR_UPDATE') {
-    // Save payload into lastBehavior variable
-    lastBehavior = message.payload;
-    
-    // Debug logging
-    console.log('Drift: Behavior update received', {
-      scrollVelocity: lastBehavior.scrollVelocity,
-      isHoveringTop: lastBehavior.isHoveringTop,
-      avgTypingInterval: lastBehavior.avgTypingInterval,
-      backspaceCount: lastBehavior.backspaceCount,
-      timestamp: new Date().toLocaleTimeString()
-    });
-    
-    sendResponse({ status: 'received' });
-  } 
-  else if (message.type === 'DEMO_TRIGGER_NOTIFICATION') {
-    // Demo mode: trigger notification immediately
-    console.log('Drift: Demo notification trigger received');
-    triggerIntervention(0.85);
-    sendResponse({ status: 'notification_triggered' });
-  }
-  else if (message.type === 'MODEL_READY') {
-    // Offscreen document notifies when model is ready
-    if (message.status === 'success') {
-      modelReady = true;
-      console.log('✅ Drift: AI model is ready in offscreen document');
-    } else {
-      console.error('❌ Drift: Model failed to load:', message.error);
+    // Restore feature history to survive reloads
+    if (result.featureHistory) {
+        featureHistory = result.featureHistory;
+        console.log(`Drift: Restored ${featureHistory.length} feature vectors`);
     }
-  }
+  });
   
-  return true;
-});
-
-// ========== Tab Switch Tracking ==========
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  if (lastActiveTabId !== null && lastActiveTabId !== activeInfo.tabId) {
-    tabSwitchCount++;
-    console.log(`Drift: Tab switched - Count: ${tabSwitchCount}`);
-  }
-  lastActiveTabId = activeInfo.tabId;
-});
-
-// ========== Window Focus Tracking ==========
-chrome.windows.onFocusChanged.addListener((windowId) => {
-  if (windowId === chrome.windows.WINDOW_ID_NONE) {
-    isBrowserFocused = false;
-    console.log('Drift: User left Chrome (Idle/Away)');
-  } else {
-    isBrowserFocused = true;
-    console.log('Drift: User returned to Chrome');
-  }
+  // ...
 });
 
 // ========== Alarm Listener (AI-Powered Analysis) ==========
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === ALARM_NAME) {
-    // Check if user is in Chrome or away
+    // Debug: Ignore focus check so it runs even if you're looking at VS Code
+    /* 
     if (!isBrowserFocused) {
       console.log('⏸️ Drift: User is Idle/Away - Skipping analysis');
       tabSwitchCount = 0;
       return;
     }
+    */
     
     // User is in Chrome - run AI prediction
     runAIPrediction();
@@ -201,7 +147,11 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 // ========== Calculate Mouse Entropy ==========
 function calculateMouseEntropy() {
-  // Simple entropy calculation based on mouse hovering top
+  // Use real entropy calculated by content script
+  // If not available (old version), fallback to hover check
+  if (lastBehavior.mouseEntropy !== undefined) {
+    return lastBehavior.mouseEntropy;
+  }
   return lastBehavior.isHoveringTop ? 0.8 : 0.2;
 }
 
@@ -234,8 +184,9 @@ async function runAIPrediction() {
     
     // Add to feature history
     featureHistory.push(normalizedFeatures);
+    chrome.storage.local.set({ featureHistory: featureHistory });
     
-    // Keep only last 10 data points (sliding window)
+    // Keep only last 1 data point (FAST DEBUGGING MODE)
     if (featureHistory.length > FEATURE_WINDOW_SIZE) {
       featureHistory.shift();
     }
@@ -277,6 +228,27 @@ async function runAIPrediction() {
         
         saveFocusHistory(analysisData);
         
+        // ========== Focus Streak Tracking ==========
+        if (score < AI_THRESHOLD) {
+          // User is focused - increment streak
+          focusMinutes++;
+          const streakHours = Math.floor(focusMinutes / 60);
+          console.log(`🔥 Drift: Focus streak! ${focusMinutes} minutes (${streakHours} hours)`);
+          
+          // Save to storage
+          chrome.storage.local.set({ focusMinutes: focusMinutes }, () => {
+            console.log(`Drift: Focus streak saved (${focusMinutes} min)`);
+          });
+        } else {
+          // User is distracted - reset streak
+          if (focusMinutes > 0) {
+            const lostStreak = focusMinutes;
+            console.log(`💔 Drift: Streak broken at ${lostStreak} minutes`);
+          }
+          focusMinutes = 0;
+          chrome.storage.local.set({ focusMinutes: 0 });
+        }
+        
         // Trigger intervention if AI predicts distraction
         if (score > AI_THRESHOLD) {
           console.log('⚠️ Drift AI: High distraction detected - Triggering intervention');
@@ -315,25 +287,20 @@ function saveFocusHistory(analysisData) {
   });
 }
 
-// Trigger distraction intervention
+// Trigger distraction intervention (Overlay Mode)
 function triggerIntervention(score) {
   const scorePercent = (score * 100).toFixed(1);
-  
-  console.log(`🚨 Drift: Triggering intervention for score ${scorePercent}%`);
-  
-  // Show notification
-  chrome.notifications.create('drift-intervention', {
-    type: 'basic',
-    iconUrl: 'icons/icon128.png',
-    title: 'Drift 🧠 - Time for a Break',
-    message: `Focus drifting detected (${scorePercent}%). Click to take a 30-second break.`,
-    priority: 2,
-    requireInteraction: true  // Keep notification visible until clicked
-  }, (notificationId) => {
-    if (chrome.runtime.lastError) {
-      console.error('Drift: Notification error', chrome.runtime.lastError);
+  console.log(`🚨 Drift: Triggering intervention overlay for score ${scorePercent}%`);
+
+  // Send message to active tab to show overlay
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0] && tabs[0].id) {
+       chrome.tabs.sendMessage(tabs[0].id, {
+         type: 'TRIGGER_INTERVENTION',
+         score: score
+       }).catch(err => console.log('Drift: Could not send to tab (maybe restricted URL):', err));
     } else {
-      console.log('Drift: Intervention notification sent:', notificationId);
+      console.log('Drift: No active tab to show intervention on');
     }
   });
 }
@@ -357,3 +324,31 @@ chrome.notifications.onClicked.addListener((notificationId) => {
 console.log('Drift AI: Background service worker initialized');
 console.log('Setting up offscreen document for TensorFlow.js...');
 setupOffscreenDocument();
+
+// Initialize focus streak from storage
+chrome.storage.local.get(['focusMinutes', 'sensitivity'], (result) => {
+  if (result.focusMinutes !== undefined) {
+    focusMinutes = result.focusMinutes;
+    const streakHours = Math.floor(focusMinutes / 60);
+    console.log(`🔥 Drift: Loaded focus streak: ${focusMinutes} minutes (${streakHours} hours)`);
+  }
+  
+  // Load sensitivity setting
+  if (result.sensitivity) {
+    AI_THRESHOLD = SENSITIVITY_THRESHOLDS[result.sensitivity] || 0.6;
+    console.log(`⚙️ Drift: Loaded sensitivity: ${result.sensitivity} (threshold: ${AI_THRESHOLD})`);
+  } else {
+    // Set default
+    chrome.storage.local.set({ sensitivity: 'balanced' });
+    console.log('⚙️ Drift: Using default sensitivity: balanced (threshold: 0.6)');
+  }
+});
+
+// ========== Listen for Settings Changes ==========
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === 'local' && changes.sensitivity) {
+    const newSensitivity = changes.sensitivity.newValue;
+    AI_THRESHOLD = SENSITIVITY_THRESHOLDS[newSensitivity] || 0.6;
+    console.log(`⚙️ Drift: Updated sensitivity to ${newSensitivity} (threshold: ${AI_THRESHOLD})`);
+  }
+});

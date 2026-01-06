@@ -13,146 +13,187 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1e3a8a 0%, #581c87 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       overflow: hidden;
+      position: relative;
+    }
+
+    /* Breathing Animation Circle */
+    .breathing-circle {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      animation: breathe 4s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes breathe {
+      0%, 100% { 
+        transform: scale(1);
+        opacity: 0.6;
+      }
+      50% { 
+        transform: scale(1.3);
+        opacity: 0.3;
+      }
     }
 
     .container {
       text-align: center;
-      max-width: 600px;
-      padding: 40px;
-      animation: fadeIn 0.5s ease-in;
+      max-width: 700px;
+      padding: 60px 40px;
+      animation: fadeIn 0.6s ease-in;
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
+      from { opacity: 0; transform: translateY(-30px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
-      font-size: 48px;
+      font-size: 56px;
       font-weight: 700;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+      margin-bottom: 16px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      letter-spacing: -1px;
     }
 
     .subtitle {
-      font-size: 18px;
+      font-size: 20px;
       opacity: 0.9;
-      margin-bottom: 60px;
+      margin-bottom: 80px;
+      font-weight: 300;
     }
 
     .activity-card {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 40px;
-      margin-bottom: 40px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 50px;
+      margin-bottom: 60px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
 
     .activity-label {
       font-size: 14px;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.8;
-      margin-bottom: 15px;
+      letter-spacing: 3px;
+      opacity: 0.7;
+      margin-bottom: 20px;
+      font-weight: 600;
     }
 
     .activity-text {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.5;
       margin-bottom: 10px;
     }
 
     .timer-container {
-      margin: 40px 0;
+      margin: 60px 0;
     }
 
     .timer {
-      font-size: 80px;
+      font-size: 120px;
       font-weight: 700;
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
       color: #fff;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
       animation: pulse 2s ease-in-out infinite;
+      letter-spacing: 8px;
     }
 
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      50% { transform: scale(1.08); }
     }
 
     .timer-label {
-      font-size: 16px;
+      font-size: 18px;
       opacity: 0.8;
-      margin-top: 10px;
+      margin-top: 20px;
+      font-weight: 400;
     }
 
     .focus-btn {
-      background: white;
-      color: #667eea;
+      background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+      color: #1e3a8a;
       border: none;
-      padding: 18px 50px;
-      font-size: 18px;
-      font-weight: 600;
-      border-radius: 50px;
+      padding: 22px 60px;
+      font-size: 20px;
+      font-weight: 700;
+      border-radius: 60px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      margin-top: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      margin-top: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .focus-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: white;
     }
 
     .focus-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
+      background: rgba(255, 255, 255, 0.3);
     }
 
     .focus-btn:not(:disabled) {
-      animation: buttonReady 0.5s ease-in;
+      animation: buttonReady 0.6s ease-in;
     }
 
     @keyframes buttonReady {
-      0% { transform: scale(0.9); opacity: 0; }
+      0% { transform: scale(0.8); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
 
-    /* Floating particles */
-    .particle {
+    /* Floating sparkles */
+    .sparkle {
       position: absolute;
-      width: 10px;
-      height: 10px;
-      background: rgba(255, 255, 255, 0.3);
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.6);
       border-radius: 50%;
-      animation: float 15s infinite;
+      animation: sparkleFloat 20s infinite;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
     }
 
-    @keyframes float {
+    @keyframes sparkleFloat {
       0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
       10% { opacity: 1; }
       90% { opacity: 1; }
-      100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+      100% { transform: translateY(-100vh) translateX(150px); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <!-- Floating particles for visual interest -->
-  <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-  <div class="particle" style="left: 30%; animation-delay: 3s;"></div>
-  <div class="particle" style="left: 50%; animation-delay: 6s;"></div>
-  <div class="particle" style="left: 70%; animation-delay: 9s;"></div>
-  <div class="particle" style="left: 90%; animation-delay: 12s;"></div>
+  <!-- Breathing circle for relaxation -->
+  <div class="breathing-circle"></div>
+
+  <!-- Floating sparkles -->
+  <div class="sparkle" style="left: 15%; animation-delay: 0s;"></div>
+  <div class="sparkle" style="left: 35%; animation-delay: 4s;"></div>
+  <div class="sparkle" style="left: 55%; animation-delay: 8s;"></div>
+  <div class="sparkle" style="left: 75%; animation-delay: 12s;"></div>
+  <div class="sparkle" style="left: 85%; animation-delay: 16s;"></div>
 
   <div class="container">
     <h1>🧠 Brain Reset</h1>
@@ -169,7 +210,7 @@
     </div>
 
     <button class="focus-btn" id="focusBtn" disabled>
-      I'm Ready to Focus 🎯
+      I'm Ready to Focus
     </button>
   </div>
 

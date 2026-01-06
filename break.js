@@ -21,12 +21,28 @@ const activities = {
   ]
 };
 
-// Get random activity
-function getRandomActivity() {
-  const categories = Object.keys(activities);
-  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-  const categoryActivities = activities[randomCategory];
-  return categoryActivities[Math.floor(Math.random() * categoryActivities.length)];
+// Get random activity (No Repeats)
+async function getNewActivity() {
+  const result = await chrome.storage.local.get(['lastActivity']);
+  const lastActivity = result.lastActivity;
+  
+  // Flatten activities
+  const allActivities = [
+    ...activities.physical, 
+    ...activities.mental
+  ];
+  
+  // Filter out the last one
+  const available = lastActivity 
+    ? allActivities.filter(a => a !== lastActivity)
+    : allActivities;
+    
+  const nextActivity = available[Math.floor(Math.random() * available.length)];
+  
+  // Save for next time
+  chrome.storage.local.set({ lastActivity: nextActivity });
+  
+  return nextActivity;
 }
 
 // Countdown timer
@@ -36,7 +52,9 @@ const activityElement = document.getElementById('activity');
 const focusBtn = document.getElementById('focusBtn');
 
 // Display random activity
-activityElement.textContent = getRandomActivity();
+getNewActivity().then(activity => {
+  activityElement.textContent = activity;
+});
 
 // Start countdown
 const countdown = setInterval(() => {
@@ -45,24 +63,27 @@ const countdown = setInterval(() => {
   
   if (timeLeft <= 0) {
     clearInterval(countdown);
-    timerElement.textContent = '✓';
+    timerElement.textContent = 'Done';
     timerElement.style.color = '#4ade80';
     
     // Enable the focus button
     focusBtn.disabled = false;
-    focusBtn.textContent = '✨ I\'m Ready to Focus ✨';
+    focusBtn.textContent = '🔙 Go Back to Work';
+    
+    // Make the checkmark clickable too
+    timerElement.style.cursor = 'pointer';
+    timerElement.title = 'Click to close';
+    timerElement.addEventListener('click', closeBreakTab);
   }
 }, 1000);
 
-// Focus button click handler
-focusBtn.addEventListener('click', () => {
-  // Close this tab
+// Function to close tab
+function closeBreakTab() {
   window.close();
   
-  // Fallback if window.close() doesn't work (some browsers block it)
+  // Fallback if window.close() doesn't work
   setTimeout(() => {
     if (!window.closed) {
-      // Show a message instead
       document.body.innerHTML = `
         <div style="
           display: flex;
@@ -80,7 +101,10 @@ focusBtn.addEventListener('click', () => {
       `;
     }
   }, 100);
-});
+}
+
+// Focus button click handler
+focusBtn.addEventListener('click', closeBreakTab);
 
 // Prevent accidental closure during break
 window.addEventListener('beforeunload', (e) => {
